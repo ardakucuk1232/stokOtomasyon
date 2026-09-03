@@ -15,12 +15,12 @@ publish/
 obfuscated/
 obfuscar.xml
 
-# Excel çalışma dosyaları (gerçek müşteri verisi içerebilir — repoya yüklemeyin)
+# Excel çalışma dosyaları
 *.xlsx
 *.xlsm
 ~$*.xlsx
 
-# Örnek şablon (kurgusal veri) repoya dahil edilir
+# Örnek şablon
 !ornek_veri.xlsx
 
 # İşletim sistemi
