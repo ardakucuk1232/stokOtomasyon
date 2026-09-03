@@ -1,0 +1,29 @@
+# Derleme çıktıları
+bin/
+obj/
+publish/
+*.user
+*.suo
+*.cache
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+
+# Yayınlama ve obfuscation
+obfuscated/
+obfuscar.xml
+
+# Excel çalışma dosyaları (gerçek müşteri verisi içerebilir — repoya yüklemeyin)
+*.xlsx
+*.xlsm
+~$*.xlsx
+
+# Örnek şablon (kurgusal veri) repoya dahil edilir
+!ornek_veri.xlsx
+
+# İşletim sistemi
+Thumbs.db
+desktop.ini
+.DS_Store

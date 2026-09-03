@@ -1,0 +1,627 @@
+<Window x:Class="StokOtomasyon.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Stok Otomasyon"
+        Height="720" Width="1180"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AcikZemin}"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="GridBaslik" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource Petrol}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+        <Style x:Key="TemelGrid" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E2ECEC"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="RowHeight" Value="30"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="#C9DCDC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="ColumnHeaderStyle" Value="{StaticResource GridBaslik}"/>
+        </Style>
+        <Style x:Key="IkincilButon" TargetType="Button" BasedOn="{StaticResource BirincilButon}">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="12,6"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{StaticResource KoyuPetrol}" Padding="16,10">
+            <DockPanel>
+                <TextBlock Text="📦 STOK OTOMASYON" Foreground="White" FontSize="17"
+                           FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                <Button x:Name="BtnDosyaSec" Content="Excel Dosyası Seç…" DockPanel.Dock="Right"
+                        Style="{StaticResource BirincilButon}" FontSize="12" Padding="12,6"
+                        Background="{StaticResource Altin}" Foreground="#0F3B3C"
+                        Click="BtnDosyaSec_Click" Margin="10,0,0,0"/>
+                <TextBlock x:Name="TxtDosya" Foreground="#BFDCDC" FontSize="11"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           TextTrimming="CharacterEllipsis" Margin="20,0,0,0"/>
+            </DockPanel>
+        </Border>
+
+        <TabControl x:Name="Sekmeler" Grid.Row="1" TabStripPlacement="Left"
+                    Background="Transparent" BorderThickness="0"
+                    SelectionChanged="Sekmeler_SelectionChanged">
+            <TabControl.Template>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="205"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="{StaticResource KoyuPetrol}">
+                            <TabPanel IsItemsHost="True" Margin="0,14,0,0"/>
+                        </Border>
+                        <ContentPresenter Grid.Column="1" ContentSource="SelectedContent" Margin="18"/>
+                    </Grid>
+                </ControlTemplate>
+            </TabControl.Template>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock x:Name="StokSekmeBaslik" Text="📊  Stok Durumu" Foreground="White"
+                               FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,14">
+                        <Border Background="#E0F2F1" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="ÜRÜN SAYISI" FontSize="11" FontWeight="Bold" Foreground="#0F3B3C"/>
+                                <TextBlock x:Name="KartUrun" Text="0" FontSize="26" FontWeight="Bold" Foreground="#0F3B3C"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#E3F2FD" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="TOPLAM KALAN" FontSize="11" FontWeight="Bold" Foreground="#0D47A1"/>
+                                <TextBlock x:Name="KartKalan" Text="0" FontSize="26" FontWeight="Bold" Foreground="#0D47A1"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#FFF3CD" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="KRİTİK" FontSize="11" FontWeight="Bold" Foreground="#8A6100"/>
+                                <TextBlock x:Name="KartKritik" Text="0" FontSize="26" FontWeight="Bold" Foreground="#8A6100"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#FDE2E2" CornerRadius="10" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="TÜKENDİ" FontSize="11" FontWeight="Bold" Foreground="#A12622"/>
+                                <TextBlock x:Name="KartTukendi" Text="0" FontSize="26" FontWeight="Bold" Foreground="#A12622"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <DockPanel Grid.Row="1" Margin="0,0,0,8">
+                        <Button Content="🔄 Yenile" Style="{StaticResource IkincilButon}"
+                                Click="BtnYenile_Click" DockPanel.Dock="Right"/>
+                        <CheckBox x:Name="ChkSadeceDusuk" Content="Sadece kritik/tükenen" DockPanel.Dock="Right"
+                                  VerticalAlignment="Center" Margin="0,0,12,0" FontSize="12"
+                                  Checked="StokFiltreDegisti" Unchecked="StokFiltreDegisti"/>
+                        <TextBox x:Name="TxtAra" DockPanel.Dock="Left" Width="260"
+                                 HorizontalAlignment="Left" TextChanged="TxtAra_TextChanged"
+                                 ToolTip="Ürün ara…"/>
+                    </DockPanel>
+
+                    <DataGrid x:Name="GridStok" Grid.Row="2" Style="{StaticResource TemelGrid}" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Ürün" Binding="{Binding Ad}" Width="*"/>
+                            <DataGridTextColumn Header="Başlangıç" Binding="{Binding Baslangic}" Width="90"/>
+                            <DataGridTextColumn Header="Giriş" Binding="{Binding Giris}" Width="80"/>
+                            <DataGridTextColumn Header="Sipariş" Binding="{Binding Siparis}" Width="80"/>
+                            <DataGridTextColumn Header="Hediye" Binding="{Binding Hediye}" Width="80"/>
+                            <DataGridTextColumn Header="Kalan" Binding="{Binding Kalan}" Width="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Durum}" Value="TÜKENDİ">
+                                        <Setter Property="Background" Value="#FBD5D5"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Durum}" Value="KRİTİK">
+                                        <Setter Property="Background" Value="#FFE9B3"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Durum}" Value="YETERLİ">
+                                        <Setter Property="Background" Value="#EAF8EF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="🧾  Sipariş Girişi" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="Verilen Kişi (Ad Soyad)" Style="{StaticResource Etiket}"/>
+                            <ComboBox x:Name="SipAdSoyad" IsEditable="True" IsTextSearchEnabled="True"
+                                      ToolTip="Yazmaya başlayın veya listeden önceki kişiyi seçin"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                            <TextBlock Text="Teslim Tarihi" Style="{StaticResource Etiket}"/>
+                            <DatePicker x:Name="SipTarih"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Nedeni" Style="{StaticResource Etiket}"/>
+                            <ComboBox x:Name="SipNeden" SelectedIndex="0">
+                                <ComboBoxItem>SİPARİŞ</ComboBoxItem>
+                                <ComboBoxItem>HEDİYE</ComboBoxItem>
+                                <ComboBoxItem>NUMUNE</ComboBoxItem>
+                                <ComboBoxItem>DİĞER</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <DockPanel Grid.Row="1" Margin="0,0,0,8">
+                        <Button Content="🧹 Temizle" Style="{StaticResource IkincilButon}"
+                                DockPanel.Dock="Right" Click="BtnSiparisTemizle_Click"/>
+                        <TextBox x:Name="SipUrunAra" Width="260" HorizontalAlignment="Left"
+                                 TextChanged="SipUrunAra_TextChanged" ToolTip="Ürün ara…"/>
+                    </DockPanel>
+
+                    <DataGrid x:Name="GridSiparis" Grid.Row="2" Style="{StaticResource TemelGrid}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Ürün" Binding="{Binding Urun}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Mevcut Stok" Binding="{Binding Mevcut}" Width="110" IsReadOnly="True"/>
+                            <DataGridTemplateColumn Header="Sipariş Adedi" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Adet, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#FFF6DE" BorderThickness="0"
+                                                 HorizontalContentAlignment="Center" FontSize="13"
+                                                 Margin="1" Padding="4,3"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DockPanel Grid.Row="3" Margin="0,12,0,0">
+                        <Button Content="💾 Siparişi Kaydet" Style="{StaticResource BirincilButon}"
+                                DockPanel.Dock="Right" Click="BtnSiparisKaydet_Click"/>
+                        <TextBlock x:Name="SipCanliOzet" VerticalAlignment="Center" FontSize="13"
+                                   FontWeight="SemiBold" Foreground="#0F3B3C"
+                                   Text="Sepet boş — adet girdikçe özet burada görünür."/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="🕘  Sipariş Geçmişi" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="White" CornerRadius="10" Padding="12"
+                            BorderBrush="#C9DCDC" BorderThickness="1" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Kişi" Style="{StaticResource Etiket}" Margin="0,0,0,4"/>
+                                <ComboBox x:Name="GecKisi" IsEditable="True" IsTextSearchEnabled="True"
+                                          KeyUp="GecmisFiltreYaziDegisti" SelectionChanged="GecmisFiltreDegisti"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="Başlangıç" Style="{StaticResource Etiket}" Margin="0,0,0,4"/>
+                                <DatePicker x:Name="GecBas" SelectedDateChanged="GecmisFiltreDegisti"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                                <TextBlock Text="Bitiş" Style="{StaticResource Etiket}" Margin="0,0,0,4"/>
+                                <DatePicker x:Name="GecBit" SelectedDateChanged="GecmisFiltreDegisti"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" Margin="0,0,10,0">
+                                <TextBlock Text="Nedeni" Style="{StaticResource Etiket}" Margin="0,0,0,4"/>
+                                <ComboBox x:Name="GecNeden" SelectionChanged="GecmisFiltreDegisti">
+                                    <ComboBoxItem IsSelected="True">TÜMÜ</ComboBoxItem>
+                                    <ComboBoxItem>SİPARİŞ</ComboBoxItem>
+                                    <ComboBoxItem>HEDİYE</ComboBoxItem>
+                                    <ComboBoxItem>NUMUNE</ComboBoxItem>
+                                    <ComboBoxItem>DİĞER</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <Button Grid.Column="4" Content="✖ Filtreleri Sıfırla" VerticalAlignment="Bottom"
+                                    Style="{StaticResource IkincilButon}" Click="BtnGecmisSifirla_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="GecOzet" Grid.Row="1" FontSize="13" FontWeight="SemiBold"
+                               Foreground="#146C6E" Margin="2,0,0,8" Text=""/>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <DataGrid x:Name="GridGecmis" Grid.Column="0" Style="{StaticResource TemelGrid}"
+                                  IsReadOnly="True" Margin="0,0,10,0"
+                                  SelectionChanged="GridGecmis_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Kişi" Binding="{Binding Kisi}" Width="*"/>
+                                <DataGridTextColumn Header="Tarih" Binding="{Binding TarihYazi}" Width="95"/>
+                                <DataGridTextColumn Header="Nedeni" Binding="{Binding Neden}" Width="90"/>
+                                <DataGridTextColumn Header="Çeşit" Binding="{Binding CesitSayisi}" Width="60"/>
+                                <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamAdet}" Width="70">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="14"
+                                BorderBrush="#C9DCDC" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock x:Name="DetayBaslik" Grid.Row="0" FontSize="14" FontWeight="Bold"
+                                           Foreground="#0F3B3C" Text="Sipariş Detayı"
+                                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                <DataGrid x:Name="GridDetay" Grid.Row="1" Style="{StaticResource TemelGrid}"
+                                          IsReadOnly="True">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Ürün" Binding="{Binding Urun}" Width="*"/>
+                                        <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" Width="70">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <DockPanel Grid.Row="3" Margin="0,12,0,0">
+                        <Button Content="🗑 Seçili Siparişi Sil" Style="{StaticResource IkincilButon}"
+                                Background="#A12622" DockPanel.Dock="Right" Margin="10,0,0,0"
+                                Click="BtnSiparisSil_Click"/>
+                        <Button Content="⬇ CSV Olarak Dışa Aktar" Style="{StaticResource IkincilButon}"
+                                DockPanel.Dock="Right" Click="BtnCsvAktar_Click"/>
+                        <TextBlock x:Name="GecSayac" VerticalAlignment="Center" FontSize="12"
+                                   Foreground="#5A6B6B" Text=""/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="🎁  Hediyelikler" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="Hediye Verilen Kişi (Ad Soyad)" Style="{StaticResource Etiket}"/>
+                            <ComboBox x:Name="HedAdSoyad" IsEditable="True" IsTextSearchEnabled="True"
+                                      ToolTip="Yazmaya başlayın veya listeden önceki kişiyi seçin"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Tarih" Style="{StaticResource Etiket}"/>
+                            <DatePicker x:Name="HedTarih"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <DockPanel Grid.Row="1" Margin="0,0,0,8">
+                        <Button Content="🧹 Temizle" Style="{StaticResource IkincilButon}"
+                                DockPanel.Dock="Right" Click="BtnHediyeTemizle_Click"/>
+                        <TextBox x:Name="HedUrunAra" Width="260" HorizontalAlignment="Left"
+                                 TextChanged="HedUrunAra_TextChanged" ToolTip="Ürün ara…"/>
+                    </DockPanel>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <DataGrid x:Name="GridHediye" Grid.Column="0" Style="{StaticResource TemelGrid}"
+                                  Margin="0,0,10,0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Ürün" Binding="{Binding Urun}" Width="*" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Mevcut" Binding="{Binding Mevcut}" Width="70" IsReadOnly="True"/>
+                                <DataGridTemplateColumn Header="Adet" Width="90">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Adet, UpdateSourceTrigger=PropertyChanged}"
+                                                     Background="#FFF6DE" BorderThickness="0"
+                                                     HorizontalContentAlignment="Center" FontSize="13"
+                                                     Margin="1" Padding="4,3"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Hediye Geçmişi" FontSize="14" FontWeight="Bold"
+                                       Foreground="#0F3B3C" Margin="0,0,0,8"/>
+                            <DataGrid x:Name="GridHediyeGecmis" Grid.Row="1" Style="{StaticResource TemelGrid}"
+                                      IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Kişi" Binding="{Binding Kisi}" Width="*"/>
+                                    <DataGridTextColumn Header="Tarih" Binding="{Binding TarihYazi}" Width="90"/>
+                                    <DataGridTextColumn Header="Ürünler" Binding="{Binding UrunOzeti}" Width="2*"/>
+                                    <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamAdet}" Width="65">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button Grid.Row="2" Content="🗑 Seçili Hediyeyi Sil" Style="{StaticResource IkincilButon}"
+                                    Background="#A12622" HorizontalAlignment="Right" Margin="0,10,0,0"
+                                    Click="BtnHediyeSil_Click"/>
+                        </Grid>
+                    </Grid>
+
+                    <DockPanel Grid.Row="3" Margin="0,12,0,0">
+                        <Button Content="💾 Hediyeyi Kaydet" Style="{StaticResource BirincilButon}"
+                                DockPanel.Dock="Right" Click="BtnHediyeKaydet_Click"/>
+                        <TextBlock x:Name="HedCanliOzet" VerticalAlignment="Center" FontSize="13"
+                                   FontWeight="SemiBold" Foreground="#0F3B3C"
+                                   Text="Adet girdikçe özet burada görünür. Hediyeler stoktan düşer."/>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="➕  Stok Girişi" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="24"
+                            BorderBrush="#C9DCDC" BorderThickness="1" VerticalAlignment="Top" Width="360">
+                        <StackPanel>
+                            <TextBlock Text="Stoğa Ürün Girişi" FontSize="17" FontWeight="Bold" Foreground="#0F3B3C"/>
+                            <TextBlock Text="Gelen partiyi kaydedin; stok otomatik artar."
+                                       FontSize="12" Foreground="#5A6B6B" Margin="0,4,0,6"/>
+                            <TextBlock Text="Tarih" Style="{StaticResource Etiket}"/>
+                            <DatePicker x:Name="GirTarih"/>
+                            <TextBlock Text="Ürün" Style="{StaticResource Etiket}"/>
+                            <ComboBox x:Name="GirUrun" IsEditable="True" IsTextSearchEnabled="True"/>
+                            <TextBlock Text="Adet" Style="{StaticResource Etiket}"/>
+                            <TextBox x:Name="GirAdet"/>
+                            <TextBlock Text="Açıklama (isteğe bağlı)" Style="{StaticResource Etiket}"/>
+                            <TextBox x:Name="GirAciklama"/>
+                            <Button Content="💾 Kaydet" Style="{StaticResource BirincilButon}"
+                                    Margin="0,18,0,0" HorizontalAlignment="Left" Click="BtnGirisKaydet_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Grid.Column="1" Margin="16,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Giriş Geçmişi" FontSize="15" FontWeight="Bold"
+                                   Foreground="#0F3B3C" Margin="0,0,0,8"/>
+                        <DataGrid x:Name="GridGiris" Grid.Row="1" Style="{StaticResource TemelGrid}" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tarih" Binding="{Binding TarihYazi}" Width="95"/>
+                                <DataGridTextColumn Header="Ürün" Binding="{Binding Urun}" Width="*"/>
+                                <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" Width="70"/>
+                                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button Grid.Row="2" Content="🗑 Seçili Girişi Sil" Style="{StaticResource IkincilButon}"
+                                Background="#A12622" HorizontalAlignment="Right" Margin="0,10,0,0"
+                                Click="BtnGirisSil_Click"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="📈  Raporlar" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+
+                        <Border Background="White" CornerRadius="10" Padding="12"
+                                BorderBrush="#C9DCDC" BorderThickness="1" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Rapor aralığı:" FontWeight="SemiBold" FontSize="13"
+                                           VerticalAlignment="Center" Foreground="#0F3B3C"/>
+                                <DatePicker x:Name="RapBas" Margin="10,0,0,0" SelectedDateChanged="RaporFiltreDegisti"/>
+                                <TextBlock Text="—" VerticalAlignment="Center" Margin="8,0"/>
+                                <DatePicker x:Name="RapBit" SelectedDateChanged="RaporFiltreDegisti"/>
+                                <Button Content="Tümü" Style="{StaticResource IkincilButon}" Margin="12,0,0,0"
+                                        Click="BtnRaporSifirla_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <UniformGrid Columns="4" Margin="0,0,0,12">
+                            <Border Background="#E0F2F1" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                                <StackPanel>
+                                    <TextBlock Text="SİPARİŞ SAYISI" FontSize="11" FontWeight="Bold" Foreground="#0F3B3C"/>
+                                    <TextBlock x:Name="RapSiparis" Text="0" FontSize="24" FontWeight="Bold" Foreground="#0F3B3C"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#E3F2FD" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                                <StackPanel>
+                                    <TextBlock Text="TOPLAM ADET" FontSize="11" FontWeight="Bold" Foreground="#0D47A1"/>
+                                    <TextBlock x:Name="RapAdet" Text="0" FontSize="24" FontWeight="Bold" Foreground="#0D47A1"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#FFF3CD" CornerRadius="10" Margin="0,0,10,0" Padding="14,10">
+                                <StackPanel>
+                                    <TextBlock Text="EN ÇOK GİDEN ÜRÜN" FontSize="11" FontWeight="Bold" Foreground="#8A6100"/>
+                                    <TextBlock x:Name="RapUrun" Text="—" FontSize="15" FontWeight="Bold"
+                                               Foreground="#8A6100" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#EDE7F6" CornerRadius="10" Padding="14,10">
+                                <StackPanel>
+                                    <TextBlock Text="EN AKTİF KİŞİ" FontSize="11" FontWeight="Bold" Foreground="#4527A0"/>
+                                    <TextBlock x:Name="RapKisi" Text="—" FontSize="15" FontWeight="Bold"
+                                               Foreground="#4527A0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <Border Background="White" CornerRadius="10" Padding="16"
+                                BorderBrush="#C9DCDC" BorderThickness="1" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="En Çok Sipariş Edilen Ürünler (İlk 10)" FontSize="14"
+                                           FontWeight="Bold" Foreground="#0F3B3C" Margin="0,0,0,10"/>
+                                <ItemsControl x:Name="ListeTopUrun">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,3">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="230"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="50"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Urun}" FontSize="12"
+                                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                <Border Grid.Column="1" Background="#146C6E" CornerRadius="4"
+                                                        Height="18" HorizontalAlignment="Left"
+                                                        Width="{Binding CubukGenisligi}"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Toplam}" FontSize="12"
+                                                           FontWeight="Bold" VerticalAlignment="Center"
+                                                           HorizontalAlignment="Right" Foreground="#0F3B3C"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="White" CornerRadius="10" Padding="16"
+                                BorderBrush="#C9DCDC" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Kişi Bazında Özet" FontSize="14" FontWeight="Bold"
+                                           Foreground="#0F3B3C" Margin="0,0,0,10"/>
+                                <DataGrid x:Name="GridKisiler" Style="{StaticResource TemelGrid}"
+                                          IsReadOnly="True" MaxHeight="300">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Kişi" Binding="{Binding Kisi}" Width="*"/>
+                                        <DataGridTextColumn Header="Sipariş Sayısı" Binding="{Binding SiparisSayisi}" Width="120"/>
+                                        <DataGridTextColumn Header="Toplam Adet" Binding="{Binding ToplamAdet}" Width="110"/>
+                                        <DataGridTextColumn Header="Son Sipariş" Binding="{Binding SonTarihYazi}" Width="110"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Style="{StaticResource MenuSekme}">
+                <TabItem.Header>
+                    <TextBlock Text="🆕  Ürün Ekle" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </TabItem.Header>
+                <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#C9DCDC"
+                        BorderThickness="1" VerticalAlignment="Top" MaxWidth="520" HorizontalAlignment="Left">
+                    <StackPanel>
+                        <TextBlock Text="Yeni Ürün Ekle" FontSize="17" FontWeight="Bold" Foreground="#0F3B3C"/>
+                        <TextBlock Text="Ürün hem Stok sayfasına satır, hem Sipariş sayfasına sütun olarak eklenir."
+                                   FontSize="12" Foreground="#5A6B6B" Margin="0,4,0,6"/>
+                        <TextBlock Text="Ürün Adı" Style="{StaticResource Etiket}"/>
+                        <TextBox x:Name="UrnAd"/>
+                        <TextBlock Text="Başlangıç Stok (isteğe bağlı)" Style="{StaticResource Etiket}"/>
+                        <TextBox x:Name="UrnBaslangic"/>
+                        <Button Content="💾 Ürünü Ekle" Style="{StaticResource BirincilButon}"
+                                Margin="0,18,0,0" HorizontalAlignment="Left" Click="BtnUrunEkle_Click"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
