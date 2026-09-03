@@ -11,7 +11,7 @@ adları, kişi isimleri ve miktarların tamamı kurgusaldır.
 **📊 Stok Durumu**
 Özet kartları (ürün sayısı, toplam kalan, kritik, tükendi), ürün arama,
 "sadece kritik/tükenen" filtresi, renkli durum tablosu. Kritik/tükenen ürün varsa
-sekme başlığında ⚠ uyarı rozeti görünür.
+sekme başlığında (!) uyarı rozeti görünür.
 
 **🧾 Sipariş Girişi**
 Kişi adı için otomatik tamamlama (önceki kişiler listeden seçilir), ürün arama kutusu,
