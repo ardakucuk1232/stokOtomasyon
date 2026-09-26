@@ -95,19 +95,21 @@ public partial class MainWindow : Window
         if (_excel == null) return;
         try
         {
-            _stok = _excel.StokOku();
-            _siparisler = _excel.SiparisleriOku()
-                                .OrderByDescending(s => s.Tarih ?? DateTime.MinValue)
-                                .ThenByDescending(s => s.SatirNo)
-                                .ToList();
-            _hediyeler = _excel.HediyeleriOku()
-                               .OrderByDescending(s => s.Tarih ?? DateTime.MinValue)
-                               .ThenByDescending(s => s.SatirNo)
-                               .ToList();
-            _girisler = _excel.GirisleriOku()
-                              .OrderByDescending(g => g.Tarih ?? DateTime.MinValue)
-                              .ThenByDescending(g => g.SatirNo)
+            var veri = _excel.TumunuOku();
+
+            _stok = veri.Urunler;
+            _siparisler = veri.Siparisler
+                              .OrderByDescending(s => s.Tarih ?? DateTime.MinValue)
+                              .ThenByDescending(s => s.SatirNo)
                               .ToList();
+            _hediyeler = veri.Hediyeler
+                             .OrderByDescending(s => s.Tarih ?? DateTime.MinValue)
+                             .ThenByDescending(s => s.SatirNo)
+                             .ToList();
+            _girisler = veri.Girisler
+                            .OrderByDescending(g => g.Tarih ?? DateTime.MinValue)
+                            .ThenByDescending(g => g.SatirNo)
+                            .ToList();
 
             StokListesiniGoster();
             KartlariGuncelle();
@@ -653,6 +655,19 @@ public partial class MainWindow : Window
         {
             Hata("Ürün eklenemedi", ex);
         }
+    }
+
+    private void AdetKutusu_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        foreach (char ch in e.Text)
+            if (!char.IsDigit(ch)) { e.Handled = true; return; }
+    }
+
+    private void AdetKutusu_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox kutu && kutu.DataContext is SiparisKalemi kalem
+            && string.IsNullOrWhiteSpace(kutu.Text))
+            kalem.Adet = 0;
     }
 
     private bool DosyaHazirMi()

@@ -4,14 +4,14 @@ Excel tabanlı stok takip, sipariş ve hediyelik kayıt uygulaması. Verilerin t
 bir Excel dosyasında tutulur; uygulama bu dosyayı okur ve yazar, formüllere dokunmaz.
 
 Depodaki `ornek_veri.xlsx` dosyası çalışan bir örnek şablondur — içindeki ürün
-adları, kişi isimleri ve miktarların tamamı kurgusaldır.
+adları, kişi isimleri ve miktarların bilgileri gerçek değildir.
 
 ## Sekmeler ve Özellikler
 
 **📊 Stok Durumu**
 Özet kartları (ürün sayısı, toplam kalan, kritik, tükendi), ürün arama,
 "sadece kritik/tükenen" filtresi, renkli durum tablosu. Kritik/tükenen ürün varsa
-sekme başlığında (!) uyarı rozeti görünür.
+sekme başlığında ⚠ uyarı rozeti görünür.
 
 **🧾 Sipariş Girişi**
 Kişi adı için otomatik tamamlama (önceki kişiler listeden seçilir), ürün arama kutusu,
@@ -73,12 +73,21 @@ Uygulama satır/sütun numaralarını ezbere bilmez; her açılışta dosyanın 
 düzeni kendisi keşfeder (`SablonHaritasi.cs`):
 
 - Sayfalar **adlarına göre değil içeriklerine göre** tanınır: "VERİLEN KİŞİ AD SOYAD"
-  başlığı olan sayfa Sipariş, "ÜRÜN ADI" + "BAŞLANGIÇ STOK" olan Stok, "TARİH" +
-  "ÜRÜN ADI" + "ADET" olan Stok Giriş sayfasıdır. Sayfaları yeniden adlandırabilirsiniz.
+  başlığı olan sayfa Sipariş, "HEDİYE VERİLEN KİŞİ" olan Hediyelikler, "ÜRÜN ADI" +
+  "BAŞLANGIÇ STOK" olan Stok, "TARİH" + "ÜRÜN ADI" + "ADET" olan Stok Giriş sayfasıdır.
+  Sayfaları yeniden adlandırabilir, sıralarını değiştirebilirsiniz.
 - Başlık hücreleri metinden bulunur; başına satır eklemek, sütunların yerini
-  değiştirmek, araya sütun eklemek uygulamayı bozmaz.
+  değiştirmek, araya sütun eklemek uygulamayı bozmaz. Arama alanı sayfanın gerçek
+  dolu aralığı kadardır (üst sınır 250 satır × 200 sütun), sabit bir pencere değil.
+- Her sayfa bir kez taranıp önbelleğe alınır; başlık aramaları bu önbellek üzerinde
+  yapılır, dosya tekrar tekrar okunmaz.
+- Toplam sütunu önce "TOPLAM" başlığından, o yoksa ürün sütunlarının sağındaki ilk
+  formüllü sütundan bulunur. Böylece başlık silinse bile yedek ürün sütunları kaybolmaz.
 - Veri alanının sonu formüllerle hazırlanmış satırlardan tespit edilir; Stok Giriş
   kapasitesi, Stok sayfasındaki SUMIF formülünün okuduğu aralıktan otomatik öğrenilir.
+- Kayıt yazılan satırda hesap formülü eksikse (örneğin Excel'de veri arasına elle satır
+  eklenmişse) formül komşu satırdan kopyalanır; satır referansları kaydırılır, mutlak
+  referanslar ($B$3 gibi) korunur — `FormulYardimcisi.cs`.
 - Düzen tanınamazsa hangi başlığın eksik olduğunu söyleyen açık bir hata gösterilir.
 
 ## Önemli notlar

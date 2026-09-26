@@ -20,11 +20,27 @@ public class ExcelService
         SablonHaritasi.Cikar(wb);
     }
 
-    public List<StokUrun> StokOku()
+    public StokVerisi TumunuOku()
     {
         using var wb = new XLWorkbook(DosyaYolu);
         var h = SablonHaritasi.Cikar(wb);
+        return new StokVerisi
+        {
+            Urunler = StokOku(h),
+            Siparisler = SiparisleriOku(h),
+            Hediyeler = HediyeleriOku(h),
+            Girisler = GirisleriOku(h)
+        };
+    }
 
+    public List<StokUrun> StokOku()
+    {
+        using var wb = new XLWorkbook(DosyaYolu);
+        return StokOku(SablonHaritasi.Cikar(wb));
+    }
+
+    private static List<StokUrun> StokOku(SablonHaritasi h)
+    {
         var urunler = new List<StokUrun>();
         var indeks = new Dictionary<string, StokUrun>(StringComparer.OrdinalIgnoreCase);
 
@@ -79,8 +95,11 @@ public class ExcelService
     public List<SiparisKaydi> HediyeleriOku()
     {
         using var wb = new XLWorkbook(DosyaYolu);
-        var h = SablonHaritasi.Cikar(wb);
+        return HediyeleriOku(SablonHaritasi.Cikar(wb));
+    }
 
+    private static List<SiparisKaydi> HediyeleriOku(SablonHaritasi h)
+    {
         var kolonAdi = new Dictionary<int, string>();
         for (int c = h.HedUrunIlkKol; c <= h.HedUrunSonKol; c++)
         {
@@ -114,8 +133,11 @@ public class ExcelService
     public List<SiparisKaydi> SiparisleriOku()
     {
         using var wb = new XLWorkbook(DosyaYolu);
-        var h = SablonHaritasi.Cikar(wb);
+        return SiparisleriOku(SablonHaritasi.Cikar(wb));
+    }
 
+    private static List<SiparisKaydi> SiparisleriOku(SablonHaritasi h)
+    {
         var kolonAdi = new Dictionary<int, string>();
         for (int c = h.SipUrunIlkKol; c <= h.SipUrunSonKol; c++)
         {
@@ -149,8 +171,11 @@ public class ExcelService
     public List<GirisKaydi> GirisleriOku()
     {
         using var wb = new XLWorkbook(DosyaYolu);
-        var h = SablonHaritasi.Cikar(wb);
+        return GirisleriOku(SablonHaritasi.Cikar(wb));
+    }
 
+    private static List<GirisKaydi> GirisleriOku(SablonHaritasi h)
+    {
         var liste = new List<GirisKaydi>();
         for (int r = h.GirIlkSatir; r <= h.GirSonSatir; r++)
         {
@@ -206,6 +231,9 @@ public class ExcelService
         h.Siparis.Cell(h.SipBaslikSatir, bosKolon).Value = ad;
         h.Hediye.Cell(h.HedBaslikSatir, bosHedKolon).Value = ad;
 
+        FormulYardimcisi.SatiriTamamla(h.Stok, bosSatir, h.StokFormulIlkKol, h.StokFormulSonKol,
+                                       h.StokIlkSatir, h.StokSonSatir);
+
         Kaydet(wb);
     }
 
@@ -241,6 +269,9 @@ public class ExcelService
         h.Hediye.Cell(satir, h.HedKolTarih).Value = tarih;
         foreach (var (urun, adet) in kalemler)
             if (adet > 0) h.Hediye.Cell(satir, kolon[urun]).Value = adet;
+
+        FormulYardimcisi.SatiriTamamla(h.Hediye, satir, h.HedToplamKol, h.HedToplamKol,
+                                       h.HedIlkSatir, h.HedSonSatir);
 
         Kaydet(wb);
     }
@@ -317,6 +348,9 @@ public class ExcelService
         h.Siparis.Cell(satir, h.SipKolNeden).Value = neden;
         foreach (var (urun, adet) in kalemler)
             if (adet > 0) h.Siparis.Cell(satir, kolon[urun]).Value = adet;
+
+        FormulYardimcisi.SatiriTamamla(h.Siparis, satir, h.SipToplamKol, h.SipToplamKol,
+                                       h.SipIlkSatir, h.SipSonSatir);
 
         Kaydet(wb);
     }

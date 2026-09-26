@@ -69,6 +69,14 @@ public class GirisKaydi
     public string TarihYazi => Tarih?.ToString("dd.MM.yyyy") ?? "";
 }
 
+public class StokVerisi
+{
+    public List<StokUrun> Urunler { get; init; } = new();
+    public List<SiparisKaydi> Siparisler { get; init; } = new();
+    public List<SiparisKaydi> Hediyeler { get; init; } = new();
+    public List<GirisKaydi> Girisler { get; init; } = new();
+}
+
 public class UrunToplami
 {
     public string Urun { get; set; } = "";

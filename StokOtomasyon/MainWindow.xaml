@@ -220,7 +220,9 @@
                                         <TextBox Text="{Binding Adet, UpdateSourceTrigger=PropertyChanged}"
                                                  Background="#FFF6DE" BorderThickness="0"
                                                  HorizontalContentAlignment="Center" FontSize="13"
-                                                 Margin="1" Padding="4,3"/>
+                                                 Margin="1" Padding="4,3" MaxLength="6"
+                                                 PreviewTextInput="AdetKutusu_PreviewTextInput"
+                                                 TextChanged="AdetKutusu_TextChanged"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -406,7 +408,9 @@
                                             <TextBox Text="{Binding Adet, UpdateSourceTrigger=PropertyChanged}"
                                                      Background="#FFF6DE" BorderThickness="0"
                                                      HorizontalContentAlignment="Center" FontSize="13"
-                                                     Margin="1" Padding="4,3"/>
+                                                     Margin="1" Padding="4,3" MaxLength="6"
+                                                     PreviewTextInput="AdetKutusu_PreviewTextInput"
+                                                     TextChanged="AdetKutusu_TextChanged"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
